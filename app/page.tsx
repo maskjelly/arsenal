@@ -148,9 +148,9 @@ export default function Page() {
               <div className="w-full h-full bg-zinc-800 animate-pulse" />
             ) : (
               <img
-                src="/api/placeholder/800/450"
+                src="/temporary.svg"
                 alt="Content preview"
-                className="w-full h-full object-cover"
+                className="object-cover"
               />
             )}
           </div>
