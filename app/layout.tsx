@@ -26,7 +26,8 @@ export default function RootLayout({
     <meta name="twitter:description" content="AI CORE answer enginer for RESEARCHERS"/>
     <meta name="twitter:image" content="https://beanlabs.vercel.app/rr.svg"/>
     <meta name="twitter:image:alt" content="AI answer engine for research"/>
-    <title>Your Page Title</title>
+    <meta name="twitter:url" content="https://beanlabs.vercel.app"/>
+    <title>ResearchRelay</title>
 </head>
       <body className="font-mono">
         <Banner/>
