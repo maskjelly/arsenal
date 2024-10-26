@@ -103,34 +103,20 @@ const config: Config = {
       },
     },
   },
-  // Updated DaisyUI theme with proper color values
+  // Keeping DaisyUI but updating the theme colors to better match shadcn/ui
   daisyui: {
     themes: [
       {
         mytheme: {
-          "primary": "#2563eb",          // Blue
-          "secondary": "#4b5563",        // Gray
-          "accent": "#db2777",           // Pink
-          "neutral": "#1f2937",          // Dark gray
-          "base-100": "#ffffff",         // White
-          "info": "#3b82f6",            // Light blue
-          "success": "#22c55e",          // Green
-          "warning": "#f59e0b",          // Amber
-          "error": "#ef4444",           // Red
-          
-          // Optional: Adding some additional color modifications
-          "base-content": "#1f2937",     // Text color
-          "primary-focus": "#1d4ed8",    // Darker blue for focus states
-          "secondary-focus": "#374151",   // Darker gray for focus states
-          "--rounded-box": "1rem",
-          "--rounded-btn": "0.5rem",
-          "--rounded-badge": "1.9rem",
-          "--animation-btn": "0.25s",
-          "--animation-input": "0.2s",
-          "--btn-focus-scale": "0.95",
-          "--border-btn": "1px",
-          "--tab-border": "1px",
-          "--tab-radius": "0.5rem",
+          "primary": "hsl(var(--primary))",
+          "secondary": "hsl(var(--secondary))",
+          "accent": "hsl(var(--accent))",
+          "neutral": "hsl(var(--muted))",
+          "base-100": "hsl(var(--background))",
+          "info": "hsl(var(--info))",
+          "success": "hsl(var(--success))",
+          "warning": "hsl(var(--warning))",
+          "error": "hsl(var(--destructive))",
         },
       },
     ],
