@@ -117,7 +117,7 @@ export default function Page() {
                       key={i}
                       title={`Source Title ${i + 1}`}
                       domain={`source${i + 1}.com`}
-                      imageUrl="/api/placeholder/280/158"
+                      imageUrl="/temporary.svg"
                       index={i}
                     />
                   ))
