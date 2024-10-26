@@ -18,7 +18,7 @@ export default function Page() {
     keepLastMessageOnError: false,
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const inputRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -30,109 +30,104 @@ export default function Page() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    handleSubmit(e);
+    await handleSubmit(e); // Wait for the submission to complete
     setIsLoading(false);
   };
 
-  const renderMessage = (message: any) => {
-    if (message.role === "user") {
-      return (
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-zinc-100">{message.content}</h1>
-        </div>
-      );
-    }
+  const renderUserMessage = (content: string) => (
+    <div className="mb-8">
+      <h1 className="text-3xl font-semibold text-zinc-100">{content}</h1>
+    </div>
+  );
 
-    return (
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-8">
-          {/* Sources Section */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 text-zinc-400 mb-3">
-              <Plus className="h-4 w-4" />
-              <span className="text-sm font-medium">Sources</span>
-            </div>
-            
-            <ScrollArea className="w-full whitespace-nowrap pb-4">
-              <div className="flex gap-4">
-                {isLoading ? (
-                  Array(4).fill(0).map((_, i) => (
-                    <SourceCardSkeleton key={i} />
-                  ))
-                ) : (
-                  Array(6).fill(0).map((_, i) => (
-                    <SourceCard
-                      key={i}
-                      title={`Source Title ${i + 1} - With a longer description that might wrap to two lines`}
-                      domain={`source${i + 1}.com`}
-                      imageUrl="/api/placeholder/280/158"
-                      index={i}
-                    />
-                  ))
-                )}
-              </div>
-            </ScrollArea>
+  const renderAssistantMessage = (messageContent: string) => (
+    <div className="grid grid-cols-12 gap-6">
+      <div className="col-span-8">
+        {/* Sources Section */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 text-zinc-400 mb-3">
+            <Plus className="h-4 w-4" />
+            <span className="text-sm font-medium">Sources</span>
           </div>
-
-          {/* Answer Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-zinc-400">
-              <Plus className="h-4 w-4" />
-              <span className="text-sm font-medium">Answer</span>
+          <ScrollArea className="w-full whitespace-nowrap pb-4">
+            <div className="flex gap-4">
+              {isLoading ? (
+                Array.from({ length: 4 }, (_, i) => (
+                  <SourceCardSkeleton key={i} />
+                ))
+              ) : (
+                Array.from({ length: 6 }, (_, i) => (
+                  <SourceCard
+                    key={i}
+                    title={`Source Title ${i + 1} - With a longer description that might wrap to two lines`}
+                    domain={`source${i + 1}.com`}
+                    imageUrl="/api/placeholder/280/158"
+                    index={i}
+                  />
+                ))
+              )}
             </div>
-            
-            {isLoading ? (
-              <ContentSkeleton />
-            ) : (
-              <MarkdownContent content={message.content} />
-            )}
-          </div>
+          </ScrollArea>
         </div>
 
-        {/* Right Side Content */}
-        <div className="col-span-4 space-y-4">
-          <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
-            {isLoading ? (
-              <div className="w-full h-full bg-zinc-800 animate-pulse" />
-            ) : (
-              <img 
-                src="/api/placeholder/800/450" 
-                alt="Content preview" 
-                className="w-full h-full object-cover"
-              />
-            )}
+        {/* Answer Section */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-zinc-400">
+            <Plus className="h-4 w-4" />
+            <span className="text-sm font-medium">Answer</span>
           </div>
-          
-          <div className="space-y-2">
-            <Button 
-              variant="outline" 
-              className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
-            >
-              <ImageIcon className="h-4 w-4" />
-              Search Images
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
-            >
-              <Video className="h-4 w-4" />
-              Search Videos
-            </Button>
-          </div>
+          {isLoading ? (
+            <ContentSkeleton />
+          ) : (
+            <MarkdownContent content={messageContent} />
+          )}
         </div>
       </div>
-    );
-  };
+
+      {/* Right Side Content */}
+      <div className="col-span-4 space-y-4">
+        <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
+          {isLoading ? (
+            <div className="w-full h-full bg-zinc-800 animate-pulse" />
+          ) : (
+            <img
+              src="/api/placeholder/800/450"
+              alt="Content preview"
+              className="w-full h-full object-cover"
+            />
+          )}
+        </div>
+        <div className="space-y-2">
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
+          >
+            <ImageIcon className="h-4 w-4" />
+            Search Images
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
+          >
+            <Video className="h-4 w-4" />
+            Search Videos
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col justify-between min-h-screen bg-black">
       <ScrollArea className="flex-grow px-6 py-8 pb-32">
         {messages.map((message) => (
           <div key={message.id}>
-            {renderMessage(message)}
+            {message.role === "user"
+              ? renderUserMessage(message.content)
+              : renderAssistantMessage(message.content)}
           </div>
         ))}
-        <div ref={inputRef}></div>
+        <div ref={inputRef} />
       </ScrollArea>
 
       <form
@@ -153,8 +148,8 @@ export default function Page() {
             className="flex-grow bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:border-zinc-700"
             disabled={isLoading}
           />
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             size="icon"
             className="bg-zinc-800 hover:bg-zinc-700 text-zinc-100"
             disabled={isLoading}

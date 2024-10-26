@@ -2,14 +2,20 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import type { CodeComponent } from 'react-markdown/lib/complex-types';
 
 interface MarkdownContentProps {
   content: string;
 }
 
+// Define a local type for CodeBlock props
+type CodeBlockProps = {
+  inline?: boolean;
+  className?: string;
+  children: React.ReactNode;
+};
+
 // CodeBlock component to render code syntax highlighting
-const CodeBlock: CodeComponent = ({ node, inline, className, children, ...props }) => {
+const CodeBlock: React.FC<CodeBlockProps> = ({ inline, className, children, ...props }) => {
   const match = /language-(\w+)/.exec(className || '');
   return !inline && match ? (
     <SyntaxHighlighter
@@ -29,7 +35,7 @@ const CodeBlock: CodeComponent = ({ node, inline, className, children, ...props 
 };
 
 // Main MarkdownContent component
-export const MarkdownContent = ({ content }: MarkdownContentProps) => {
+export const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => {
   return (
     <div className="prose max-w-full text-zinc-100">
       <ReactMarkdown
@@ -49,7 +55,6 @@ export const MarkdownContent = ({ content }: MarkdownContentProps) => {
           hr: () => <hr className="border-zinc-600 my-4" />,
           strong: ({ children }) => <strong className="font-bold text-zinc-100">{children}</strong>,
           em: ({ children }) => <em className="italic text-zinc-100">{children}</em>,
-          code: CodeBlock,
         }}
       >
         {content}
