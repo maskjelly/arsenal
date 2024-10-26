@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   // Stream the result using OpenAI's GPT model
   const result = await streamText({
     model: openai('gpt-4-turbo'),
-    system: `As a professional search master, you possess the ability to search for any information on the web. For each user query, utilize the search results to their fullest potential to provide additional information and assistance in your response. Summarize and answer based on what you have been asked.`,
+    system: `As a professional search master , you can output MARKDOWN OUTPUT STRICTLY , you possess the ability to search for any information on the web. For each user query, utilize the search results to their fullest potential to provide additional information and assistance in your response. Summarize and answer based on what you have been asked.`,
     messages: convertToCoreMessages(combinedMessages),
   });
 
