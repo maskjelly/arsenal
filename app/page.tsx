@@ -12,51 +12,92 @@ import { SourceCardSkeleton } from "@/components/source-card-skeleton";
 import { MarkdownContent } from "@/components/markdown-content";
 import { ContentSkeleton } from "@/components/content-skeleton";
 
+/**
+ * Main Chat Interface Component
+ * 
+ * This component implements a full-featured chat interface with:
+ * - Real-time message streaming
+ * - Loading states with skeletons
+ * - Source cards for reference materials
+ * - Media search capabilities
+ * - Responsive layout
+ */
 export default function Page() {
+  // Track which message is currently being streamed
   const [pendingMessageId, setPendingMessageId] = useState<string | null>(null);
+  // Reference to the input area for scrolling
   const inputRef = useRef<HTMLDivElement | null>(null);
+  // Track if we're waiting for an initial response
+  const [waitingForResponse, setWaitingForResponse] = useState(false);
   
+  /**
+   * Initialize chat functionality with vercel/ai
+   * Handles message state, input management, and loading states
+   */
   const { messages, input, handleInputChange, isLoading, append } = useChat({
     api: "/api/chat",
     onResponse: () => {
-      // When we start getting a response, we keep track of the message being streamed
+      // When we get a response, track the message being streamed
       const lastMessage = messages[messages.length - 1];
       if (lastMessage?.role === 'assistant') {
         setPendingMessageId(lastMessage.id);
       }
+      setWaitingForResponse(false);
     },
     onFinish: () => {
+      // Clean up after streaming finishes
       setPendingMessageId(null);
+      setWaitingForResponse(false);
+      // Scroll to input
       if (inputRef.current) {
         inputRef.current.scrollIntoView({ behavior: "smooth" });
       }
     },
   });
 
+  /**
+   * Handle form submission for new messages
+   * Prevents empty submissions and manages loading states
+   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim()) return;
 
+    setWaitingForResponse(true);
     await append({
       role: 'user',
       content: input.trim(),
     });
   };
 
+  /**
+   * Render a user message
+   * Displays the user's input as a large heading
+   */
   const renderUserMessage = (content: string) => (
     <div className="mb-8">
       <h1 className="text-3xl font-semibold text-zinc-100">{content}</h1>
     </div>
   );
 
+  /**
+   * Render an assistant message with loading states
+   * Includes sources, answer content, and media search options
+   */
   const renderAssistantMessage = (message: Message) => {
-    // Only show skeleton for the last message when it's being streamed
+    // Determine loading states
     const isStreaming = message.id === pendingMessageId;
     const isLastMessage = message.id === messages[messages.length - 1]?.id;
-    const shouldShowSkeleton = isLoading && isLastMessage && !isStreaming && messages[messages.length - 1]?.role === 'user';
+    
+    // Show skeleton for the latest message that's not yet streaming
+    const shouldShowSkeleton = (waitingForResponse || isLoading) && 
+      isLastMessage && 
+      !isStreaming && 
+      messages[messages.length - 1]?.role === 'user';
 
     return (
       <div className="grid grid-cols-12 gap-6">
+        {/* Left Column - Sources and Answer */}
         <div className="col-span-8">
           {/* Sources Section */}
           <div className="mb-6">
@@ -99,8 +140,9 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Right Side Content */}
+        {/* Right Column - Media Preview and Search */}
         <div className="col-span-4 space-y-4">
+          {/* Preview Area */}
           <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
             {shouldShowSkeleton ? (
               <div className="w-full h-full bg-zinc-800 animate-pulse" />
@@ -112,6 +154,7 @@ export default function Page() {
               />
             )}
           </div>
+          {/* Media Search Buttons */}
           <div className="space-y-2">
             <Button
               variant="outline"
@@ -135,14 +178,18 @@ export default function Page() {
     );
   };
 
-  // Render initial skeleton only when waiting for the first response
+  /**
+   * Render initial loading state
+   * Shows when waiting for the first response
+   */
   const renderInitialSkeleton = () => {
     const isFirstMessage = messages.length === 1 && messages[0].role === 'user';
-    if (!isLoading || !isFirstMessage) return null;
+    if (!waitingForResponse || !isFirstMessage) return null;
     
     return (
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-8">
+          {/* Sources Section Skeleton */}
           <div className="mb-6">
             <div className="flex items-center gap-2 text-zinc-400 mb-3">
               <Plus className="h-4 w-4" />
@@ -157,6 +204,7 @@ export default function Page() {
             </ScrollArea>
           </div>
           
+          {/* Answer Section Skeleton */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-zinc-400">
               <Plus className="h-4 w-4" />
@@ -166,6 +214,7 @@ export default function Page() {
           </div>
         </div>
 
+        {/* Right Side Skeleton */}
         <div className="col-span-4 space-y-4">
           <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
             <div className="w-full h-full bg-zinc-800 animate-pulse" />
@@ -195,7 +244,9 @@ export default function Page() {
 
   return (
     <div className="flex flex-col justify-between min-h-screen bg-black">
+      {/* Main Chat Area */}
       <ScrollArea className="flex-grow px-6 py-8 pb-32">
+        {/* Render Messages */}
         {messages.map((message) => (
           <div key={message.id}>
             {message.role === "user"
@@ -204,12 +255,14 @@ export default function Page() {
           </div>
         ))}
         
-        {/* Show initial skeleton while waiting for first response */}
+        {/* Initial Loading State */}
         {renderInitialSkeleton()}
         
+        {/* Scroll Anchor */}
         <div ref={inputRef} />
       </ScrollArea>
 
+      {/* Input Form */}
       <form
         onSubmit={handleSubmit}
         className={cn(

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/app/theme-provider";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Banner from "@/components/banner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Banner/>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
