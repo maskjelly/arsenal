@@ -38,9 +38,9 @@ export default function RootLayout({
         />
         <meta name="twitter:url" content="https://beanlabs.vercel.app" />
         <title>ResearchRelay</title>
-        <Analytics />
       </head>
       <body className="font-mono">
+        <Analytics />
         <Banner />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
