@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Arsenal",
-  description: "Realtime - AI Research Engine - Make your research time better ",
+  description: "Realtime - AI Research Engine - Make your research time better",
 };
 export default function RootLayout({
   children,

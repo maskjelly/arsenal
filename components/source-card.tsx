@@ -8,6 +8,8 @@ interface SourceCardProps {
   index: number;
 }
 
+
+
 export const SourceCard = ({ title, domain, imageUrl, index }: SourceCardProps) => {
   return (
     <Card className="bg-zinc-900/50 border-zinc-800 hover:bg-zinc-800/50 transition-colors w-[280px] flex-shrink-0">

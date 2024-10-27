@@ -12,28 +12,11 @@ import { SourceCardSkeleton } from "@/components/source-card-skeleton";
 import { MarkdownContent } from "@/components/markdown-content";
 import { ContentSkeleton } from "@/components/content-skeleton";
 
-/**
- * Main Chat Interface Component
- * 
- * This component implements a full-featured chat interface with:
- * - Real-time message streaming
- * - Loading states with skeletons
- * - Source cards for reference materials
- * - Media search capabilities
- * - Responsive layout
- */
 export default function Page() {
-  // Track which message is currently being streamed
   const [pendingMessageId, setPendingMessageId] = useState<string | null>(null);
-  // Reference to the input area for scrolling
   const inputRef = useRef<HTMLDivElement | null>(null);
-  // Track if we're waiting for an initial response
   const [waitingForResponse, setWaitingForResponse] = useState(false);
   
-  /**
-   * Initialize chat functionality with vercel/ai
-   * Handles message state, input management, and loading states
-   */
   const { messages, input, handleInputChange, isLoading, append } = useChat({
     api: "/api/chat",
     onResponse: () => {
@@ -41,8 +24,8 @@ export default function Page() {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage?.role === 'assistant') {
         setPendingMessageId(lastMessage.id);
+        setWaitingForResponse(false);
       }
-      setWaitingForResponse(false);
     },
     onFinish: () => {
       // Clean up after streaming finishes
@@ -55,10 +38,6 @@ export default function Page() {
     },
   });
 
-  /**
-   * Handle form submission for new messages
-   * Prevents empty submissions and manages loading states
-   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -70,27 +49,19 @@ export default function Page() {
     });
   };
 
-  /**
-   * Render a user message
-   * Displays the user's input as a large heading
-   */
   const renderUserMessage = (content: string) => (
     <div className="mb-8">
       <h1 className="text-3xl font-semibold text-zinc-100">{content}</h1>
     </div>
   );
 
-  /**
-   * Render an assistant message with loading states
-   * Includes sources, answer content, and media search options
-   */
   const renderAssistantMessage = (message: Message) => {
     // Determine loading states
     const isStreaming = message.id === pendingMessageId;
     const isLastMessage = message.id === messages[messages.length - 1]?.id;
     
-    // Show skeleton for the latest message that's not yet streaming
-    const shouldShowSkeleton = (waitingForResponse || isLoading) && 
+    // Show skeleton when waiting for the response and this is the last message
+    const shouldShowSkeleton = waitingForResponse && 
       isLastMessage && 
       !isStreaming && 
       messages[messages.length - 1]?.role === 'user';
@@ -115,9 +86,9 @@ export default function Page() {
                   Array.from({ length: 6 }, (_, i) => (
                     <SourceCard
                       key={i}
-                      title={`Source Title ${i + 1}`}
+                      title={`Example Title${i + 1}`}
                       domain={`source${i + 1}.com`}
-                      imageUrl="/temporary.svg"
+                      imageUrl="temporary.svg"
                       index={i}
                     />
                   ))
@@ -178,70 +149,6 @@ export default function Page() {
     );
   };
 
-  /**
-   * Render initial loading state
-   * Shows when waiting for the first response
-   */
-  const renderInitialSkeleton = () => {
-    const isFirstMessage = messages.length === 1 && messages[0].role === 'user';
-    if (!waitingForResponse || !isFirstMessage) return null;
-    
-    return (
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-8">
-          {/* Sources Section Skeleton */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 text-zinc-400 mb-3">
-              <Plus className="h-4 w-4" />
-              <span className="text-sm font-medium">Sources</span>
-            </div>
-            <ScrollArea className="w-full whitespace-nowrap pb-4">
-              <div className="flex gap-4">
-                {Array.from({ length: 4 }, (_, i) => (
-                  <SourceCardSkeleton key={i} />
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-          
-          {/* Answer Section Skeleton */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-zinc-400">
-              <Plus className="h-4 w-4" />
-              <span className="text-sm font-medium">Answer</span>
-            </div>
-            <ContentSkeleton />
-          </div>
-        </div>
-
-        {/* Right Side Skeleton */}
-        <div className="col-span-4 space-y-4">
-          <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
-            <div className="w-full h-full bg-zinc-800 animate-pulse" />
-          </div>
-          <div className="space-y-2">
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
-              disabled={true}
-            >
-              <ImageIcon className="h-4 w-4" />
-              Search Images
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
-              disabled={true}
-            >
-              <Video className="h-4 w-4" />
-              Search Videos
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="flex flex-col justify-between min-h-screen bg-black">
       {/* Main Chat Area */}
@@ -255,8 +162,56 @@ export default function Page() {
           </div>
         ))}
         
-        {/* Initial Loading State */}
-        {renderInitialSkeleton()}
+        {/* Show skeleton while waiting for response */}
+        {waitingForResponse && messages.length > 0 && messages[messages.length - 1]?.role === 'user' && (
+          <div className="grid grid-cols-12 gap-6">
+            <div className="col-span-8">
+              <div className="mb-6">
+                <div className="flex items-center gap-2 text-zinc-400 mb-3">
+                  <Plus className="h-4 w-4" />
+                  <span className="text-sm font-medium">Sources</span>
+                </div>
+                <ScrollArea className="w-full whitespace-nowrap pb-4">
+                  <div className="flex gap-4">
+                    {Array.from({ length: 4 }, (_, i) => (
+                      <SourceCardSkeleton key={i} />
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-zinc-400">
+                  <Plus className="h-4 w-4" />
+                  <span className="text-sm font-medium">Answer</span>
+                </div>
+                <ContentSkeleton />
+              </div>
+            </div>
+            <div className="col-span-4 space-y-4">
+              <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
+                <div className="w-full h-full bg-zinc-800 animate-pulse" />
+              </div>
+              <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
+                  disabled={true}
+                >
+                  <ImageIcon className="h-4 w-4" />
+                  Search Images
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
+                  disabled={true}
+                >
+                  <Video className="h-4 w-4" />
+                  Search Videos
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Scroll Anchor */}
         <div ref={inputRef} />

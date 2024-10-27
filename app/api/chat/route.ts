@@ -15,8 +15,7 @@ export async function POST(req: Request) {
   const lastMessage = messages[messages.length - 1]?.content;
 
   // Fetch relevant context using Tavily based on the user's last message
-  const context = await tvly.searchContext(lastMessage);
-
+  const context = await tvly.searchContext(lastMessage)
   // Prepare combined input with the user's message and retrieved context
   const combinedMessages = [
     ...messages,
