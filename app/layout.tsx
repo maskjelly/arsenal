@@ -40,9 +40,9 @@ export default function RootLayout({
         <title>ResearchRelay</title>
       </head>
       <body className="font-mono">
-        <Analytics />
         <Banner />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <Analytics />
           {children}
         </ThemeProvider>
       </body>
