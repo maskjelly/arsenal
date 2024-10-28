@@ -1,6 +1,6 @@
 import { openai } from '@ai-sdk/openai';
 import { convertToCoreMessages, streamText } from 'ai';
-const { tavily } = require('@tavily/core');
+import { tavily } from '@tavily/core';
 const APIKEY = process.env.TAVAPI;
 const tvly = tavily({ apiKey: APIKEY });
 
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const lastMessage = messages[messages.length - 1]?.content;
 
   // Fetch relevant context using Tavily based on the user's last message
-  const context = await tvly.searchContext(lastMessage)
+  const context = await tvly.searchContext(lastMessage , {includeImages : true})
   // Prepare combined input with the user's message and retrieved context
   const combinedMessages = [
     ...messages,

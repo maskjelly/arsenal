@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Banner from "@/components/banner";
 import { Analytics } from "@vercel/analytics/react";
+import { RecoilRoot } from 'recoil';
 
 const inter = Inter({ subsets: ["latin"] });
 
