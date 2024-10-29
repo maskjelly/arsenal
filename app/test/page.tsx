@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { searchTavily } from './actions/getUrl'
 import type { TavilySearchResponse } from './lib/types'
 
-// Separate ImageItem component to handle individual images
+// ImageItem Component
 const ImageItem = ({ imageUrl, imageDescription, index }: { 
   imageUrl: string; 
   imageDescription: string | null; 
@@ -22,9 +22,8 @@ const ImageItem = ({ imageUrl, imageDescription, index }: {
         <Image
           src={imageUrl}
           alt={imageDescription || `Search result image ${index + 1}`}
-          width={400}
-          height={300}
-          className={`object-cover w-full h-full transition-transform group-hover:scale-105 ${
+          fill
+          className={`object-cover transition-transform group-hover:scale-105 ${
             isLoading ? 'blur-sm' : 'blur-0'
           }`}
           onError={() => {
@@ -32,9 +31,8 @@ const ImageItem = ({ imageUrl, imageDescription, index }: {
             setIsError(true);
           }}
           onLoad={() => setIsLoading(false)}
-          unoptimized={!imageUrl.startsWith('https')}
-          style={{ objectFit: 'cover' }}
-          priority={index < 4} // Load first 4 images with priority
+          unoptimized
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
       {imageDescription && (
@@ -48,6 +46,7 @@ const ImageItem = ({ imageUrl, imageDescription, index }: {
   );
 };
 
+// ImageGallery Component
 const ImageGallery = ({ images } : { images: any[] }) => {
   if (!images?.length) return null;
 
@@ -55,7 +54,7 @@ const ImageGallery = ({ images } : { images: any[] }) => {
     <div className="mb-6">
       <h2 className="font-bold mb-4">Related Images ({images.length}):</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {images.map(({image, index}: any, idx: number) => {
+        {images.map((image, idx) => {
           const imageUrl = typeof image === 'string' ? image : image?.url;
           const imageDescription = typeof image === 'string' ? null : image?.description;
           
@@ -75,6 +74,7 @@ const ImageGallery = ({ images } : { images: any[] }) => {
   );
 };
 
+// Main SearchPage Component
 export default function SearchPage() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<TavilySearchResponse | null>(null)
@@ -169,26 +169,6 @@ export default function SearchPage() {
               </div>
             ))}
           </div>
-{/* 
-          {results.follow_up_questions.length > 0 && (
-            <div className="mt-6">
-              <h3 className="font-bold mb-2">Follow-up Questions:</h3>
-              <ul className="list-disc pl-5 space-y-1">
-                {results.follow_up_questions.map(({question, index} : any) => (
-                  <li 
-                    key={index} 
-                    className="text-blue-600 cursor-pointer hover:underline"
-                    onClick={() => {
-                      setQuery(question);
-                      handleSearch(new Event('submit') as any);
-                    }}
-                  >
-                    {question}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )} */}
 
           {debug && (
             <div className="mt-8">
