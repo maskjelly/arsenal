@@ -17,7 +17,6 @@ export async function searchTavily(query: string): Promise<SearchResult> {
         api_key: TAVILY_API_KEY,
         query: query,
         include_images: true,  // Change to include_images
-        images_number: 4,      // Request up to 4 images
       }),
     })
 
@@ -28,7 +27,8 @@ export async function searchTavily(query: string): Promise<SearchResult> {
     }
 
     const data = await response.json()
-    console.log('API Response:', data)  // Debug log
+    // console.log('API Response:', data)  // Debug log
+    console.log(data.results.content)
 
     return {
       success: true,

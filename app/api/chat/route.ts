@@ -16,10 +16,13 @@ export async function POST(req: Request) {
 
   // Fetch relevant context using Tavily based on the user's last message
   const context = await tvly.searchContext(lastMessage , {includeImages : true})
+  // Now i have to change the context to the new REST API for the context and also for the image 
+  
+  
   // Prepare combined input with the user's message and retrieved context
   const combinedMessages = [
     ...messages,
-    { role: 'system', content: `Context information: ${context}` },
+    context
   ];
 
   // Stream the result using OpenAI's GPT model

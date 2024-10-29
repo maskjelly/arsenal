@@ -151,7 +151,7 @@ export default function SearchPage() {
 
           <div className="space-y-4">
             {results.results.map((result, index) => (
-              <div key={index} className="p-4 border rounded hover:bg-gray-50">
+              <div key={index} className="p-4 border rounded hover:bg-zinc-900">
                 <h2 className="text-xl font-bold mb-2">
                   <a 
                     href={result.url} 
@@ -169,7 +169,8 @@ export default function SearchPage() {
               </div>
             ))}
           </div>
-
+{/* The below code that is just to display the debug info aka the response that i got from API - RESTAPI uuffffff */}
+{/* 
           {debug && (
             <div className="mt-8">
               <div className="mb-4 p-4 bg-gray-100 rounded overflow-auto">
@@ -177,7 +178,7 @@ export default function SearchPage() {
                 <pre className="text-xs">{debug}</pre>
               </div>
             </div>
-          )}
+          )} */}
         </div>
       )}
     </div>
