@@ -13,7 +13,7 @@ export interface TavilySearchResult {
 
 export interface TavilySearchResponse {
   query: string;
-  follow_up_questions: string[] | null;
+  follow_up_questions: string[];
   answer: string | null;
   images: TavilyImage[];
   results: TavilySearchResult[];

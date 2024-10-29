@@ -4,45 +4,70 @@ import Image from 'next/image'
 import { searchTavily } from './actions/getUrl'
 import type { TavilySearchResponse } from './lib/types'
 
-const ImageGallery = ({ images } : any) => {
-  if (!images || images.length === 0) return null;
+// Separate ImageItem component to handle individual images
+const ImageItem = ({ imageUrl, imageDescription, index }: { 
+  imageUrl: string; 
+  imageDescription: string | null; 
+  index: number;
+}) => {
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  if (isError) return null;
+  if (!imageUrl) return null;
+
+  return (
+    <div className="group rounded-lg overflow-hidden shadow-md bg-white transition-all hover:shadow-lg">
+      <div className="relative w-full h-48">
+        <Image
+          src={imageUrl}
+          alt={imageDescription || `Search result image ${index + 1}`}
+          width={400}
+          height={300}
+          className={`object-cover w-full h-full transition-transform group-hover:scale-105 ${
+            isLoading ? 'blur-sm' : 'blur-0'
+          }`}
+          onError={() => {
+            console.error(`Failed to load image: ${imageUrl}`);
+            setIsError(true);
+          }}
+          onLoad={() => setIsLoading(false)}
+          unoptimized={!imageUrl.startsWith('https')}
+          style={{ objectFit: 'cover' }}
+          priority={index < 4} // Load first 4 images with priority
+        />
+      </div>
+      {imageDescription && (
+        <div className="p-3">
+          <p className="text-sm text-gray-600 line-clamp-2">
+            {imageDescription}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ImageGallery = ({ images } : { images: any[] }) => {
+  if (!images?.length) return null;
 
   return (
     <div className="mb-6">
       <h2 className="font-bold mb-4">Related Images ({images.length}):</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {images.map(({image, index}: any) => {
-          // Handle both string URLs and image objects
-          const imageUrl = typeof image === 'string' ? image : image.url;
-          const imageDescription = typeof image === 'string' ? null : image.description;
+        {images.map(({image, index}: any, idx: number) => {
+          const imageUrl = typeof image === 'string' ? image : image?.url;
+          const imageDescription = typeof image === 'string' ? null : image?.description;
           
+          if (!imageUrl) return null;
+
           return (
-            <div 
-              key={index} 
-              className="group rounded-lg overflow-hidden shadow-md bg-white transition-all hover:shadow-lg"
-            >
-              <div className="aspect-video relative">
-                <Image
-                  src={imageUrl}
-                  alt={imageDescription || `Search result image ${index + 1}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform group-hover:scale-105"
-                  onError={(e) => {
-                    console.error(`Failed to load image: ${imageUrl}`);
-                    const target = e.target as HTMLImageElement;
-                    target.parentElement?.parentElement?.parentElement?.classList.add('hidden');
-                  }}
-                />
-              </div>
-              {imageDescription && (
-                <div className="p-3">
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {imageDescription}
-                  </p>
-                </div>
-              )}
-            </div>
+            <ImageItem
+              key={`${idx}-${imageUrl}`}
+              imageUrl={imageUrl}
+              imageDescription={imageDescription}
+              index={idx}
+            />
           );
         })}
       </div>
@@ -145,11 +170,11 @@ export default function SearchPage() {
             ))}
           </div>
 
-          {results.follow_up_questions && results.follow_up_questions.length > 0 && (
+          {results.follow_up_questions.length > 0 && (
             <div className="mt-6">
               <h3 className="font-bold mb-2">Follow-up Questions:</h3>
               <ul className="list-disc pl-5 space-y-1">
-                {results.follow_up_questions.map((question, index) => (
+                {results.follow_up_questions.map(({question, index} : any) => (
                   <li 
                     key={index} 
                     className="text-blue-600 cursor-pointer hover:underline"
@@ -165,7 +190,6 @@ export default function SearchPage() {
             </div>
           )}
 
-          {/* Debug Section */}
           {debug && (
             <div className="mt-8">
               <div className="mb-4 p-4 bg-gray-100 rounded overflow-auto">
