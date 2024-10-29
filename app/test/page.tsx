@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Image from 'next/image'
 import { searchTavily } from './actions/getUrl'
 import type { TavilySearchResponse } from './lib/types'
 
@@ -21,14 +22,16 @@ const ImageGallery = ({ images } : any) => {
               className="group rounded-lg overflow-hidden shadow-md bg-white transition-all hover:shadow-lg"
             >
               <div className="aspect-video relative">
-                <img
+                <Image
                   src={imageUrl}
                   alt={imageDescription || `Search result image ${index + 1}`}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform group-hover:scale-105"
                   onError={(e) => {
                     console.error(`Failed to load image: ${imageUrl}`);
                     const target = e.target as HTMLImageElement;
-                    target.parentElement?.parentElement?.classList.add('hidden');
+                    target.parentElement?.parentElement?.parentElement?.classList.add('hidden');
                   }}
                 />
               </div>
