@@ -169,7 +169,7 @@ export default function SearchPage() {
               </div>
             ))}
           </div>
-
+{/* 
           {results.follow_up_questions.length > 0 && (
             <div className="mt-6">
               <h3 className="font-bold mb-2">Follow-up Questions:</h3>
@@ -188,7 +188,7 @@ export default function SearchPage() {
                 ))}
               </ul>
             </div>
-          )}
+          )} */}
 
           {debug && (
             <div className="mt-8">
