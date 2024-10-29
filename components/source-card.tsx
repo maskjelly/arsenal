@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { searchTavily } from "@/app/actions/action";
 import { ExternalLink } from "lucide-react";
 
 interface SourceCardProps {
