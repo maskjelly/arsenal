@@ -1,251 +1,183 @@
-"use client";
+'use client'
 
-import { useChat, Message } from "ai/react";
-import { useEffect, useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Send, Image as ImageIcon, Video, Plus } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { SourceCard } from "@/components/source-card";
-import { SourceCardSkeleton } from "@/components/source-card-skeleton";
-import { MarkdownContent } from "@/components/markdown-content";
-import { ContentSkeleton } from "@/components/content-skeleton";
+import React, { useState } from "react"
+import Image from "next/image"
+import { Search } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { searchTavily } from "@/app/actions/action"
+import { TavilySearchResponse } from "./lib/types"
 
-export default function Page() {
-  const [pendingMessageId, setPendingMessageId] = useState<string | null>(null);
-  const inputRef = useRef<HTMLDivElement | null>(null);
-  const [waitingForResponse, setWaitingForResponse] = useState(false);
-  
-  const { messages, input, handleInputChange, isLoading, append } = useChat({
-    api: "/api/chat",
-    onResponse: () => {
-      // When we get a response, track the message being streamed
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage?.role === 'assistant') {
-        setPendingMessageId(lastMessage.id);
-        setWaitingForResponse(false);
-      }
-    },
-    onFinish: () => {
-      // Clean up after streaming finishes
-      setPendingMessageId(null);
-      setWaitingForResponse(false);
-      // Scroll to input
-      if (inputRef.current) {
-        inputRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-    },
-  });
+const ImageItem = ({
+  imageUrl,
+  imageDescription,
+  index,
+}: {
+  imageUrl: string
+  imageDescription: string | null
+  index: number
+}) => {
+  const [isError, setIsError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-
-    setWaitingForResponse(true);
-    await append({
-      role: 'user',
-      content: input.trim(),
-    });
-  };
-
-  const renderUserMessage = (content: string) => (
-    <div className="mb-8">
-      <h1 className="text-3xl font-semibold text-zinc-100">{content}</h1>
-    </div>
-  );
-
-  const renderAssistantMessage = (message: Message) => {
-    // Determine loading states
-    const isStreaming = message.id === pendingMessageId;
-    const isLastMessage = message.id === messages[messages.length - 1]?.id;
-    
-    // Show skeleton when waiting for the response and this is the last message
-    const shouldShowSkeleton = waitingForResponse && 
-      isLastMessage && 
-      !isStreaming && 
-      messages[messages.length - 1]?.role === 'user';
-
-    return (
-      <div className="grid grid-cols-12 gap-6">
-        {/* Left Column - Sources and Answer */}
-        <div className="col-span-8">
-          {/* Sources Section */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 text-zinc-400 mb-3">
-              <Plus className="h-4 w-4" />
-              <span className="text-sm font-medium">Sources</span>
-            </div>
-            <ScrollArea className="w-full whitespace-nowrap pb-4">
-              <div className="flex gap-4">
-                {shouldShowSkeleton ? (
-                  Array.from({ length: 4 }, (_, i) => (
-                    <SourceCardSkeleton key={i} />
-                  ))
-                ) : (
-                  Array.from({ length: 6 }, (_, i) => (
-                    <SourceCard
-                      key={i}
-                      title={`Example Title${i + 1}`}
-                      domain={`source${i + 1}.com`}
-                      imageUrl="temporary.svg"
-                      index={i}
-                    />
-                  ))
-                )}
-              </div>
-            </ScrollArea>
-          </div>
-
-          {/* Answer Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-zinc-400">
-              <Plus className="h-4 w-4" />
-              <span className="text-sm font-medium">Answer</span>
-            </div>
-            {shouldShowSkeleton ? (
-              <ContentSkeleton />
-            ) : (
-              <MarkdownContent content={message.content} />
-            )}
-          </div>
-        </div>
-
-        {/* Right Column - Media Preview and Search */}
-        <div className="col-span-4 space-y-4">
-          {/* Preview Area */}
-          <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
-            {shouldShowSkeleton ? (
-              <div className="w-full h-full bg-zinc-800 animate-pulse" />
-            ) : (
-              <img
-                src="/temporary.svg"
-                alt="Content preview"
-                className="object-cover"
-              />
-            )}
-          </div>
-          {/* Media Search Buttons */}
-          <div className="space-y-2">
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
-              disabled={shouldShowSkeleton}
-            >
-              <ImageIcon className="h-4 w-4" />
-              Search Images
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
-              disabled={shouldShowSkeleton}
-            >
-              <Video className="h-4 w-4" />
-              Search Videos
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  if (isError || !imageUrl) return null
 
   return (
-    <div className="flex flex-col justify-between min-h-screen bg-black">
-      {/* Main Chat Area */}
-      <ScrollArea className="flex-grow px-6 py-8 pb-32">
-        {/* Render Messages */}
-        {messages.map((message) => (
-          <div key={message.id}>
-            {message.role === "user"
-              ? renderUserMessage(message.content)
-              : renderAssistantMessage(message)}
-          </div>
-        ))}
-        
-        {/* Show skeleton while waiting for response */}
-        {waitingForResponse && messages.length > 0 && messages[messages.length - 1]?.role === 'user' && (
-          <div className="grid grid-cols-12 gap-6">
-            <div className="col-span-8">
-              <div className="mb-6">
-                <div className="flex items-center gap-2 text-zinc-400 mb-3">
-                  <Plus className="h-4 w-4" />
-                  <span className="text-sm font-medium">Sources</span>
-                </div>
-                <ScrollArea className="w-full whitespace-nowrap pb-4">
-                  <div className="flex gap-4">
-                    {Array.from({ length: 4 }, (_, i) => (
-                      <SourceCardSkeleton key={i} />
-                    ))}
-                  </div>
-                </ScrollArea>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-zinc-400">
-                  <Plus className="h-4 w-4" />
-                  <span className="text-sm font-medium">Answer</span>
-                </div>
-                <ContentSkeleton />
-              </div>
-            </div>
-            <div className="col-span-4 space-y-4">
-              <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
-                <div className="w-full h-full bg-zinc-800 animate-pulse" />
-              </div>
-              <div className="space-y-2">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
-                  disabled={true}
-                >
-                  <ImageIcon className="h-4 w-4" />
-                  Search Images
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2 text-zinc-400 border-zinc-800 hover:bg-zinc-800/50"
-                  disabled={true}
-                >
-                  <Video className="h-4 w-4" />
-                  Search Videos
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Scroll Anchor */}
-        <div ref={inputRef} />
-      </ScrollArea>
-
-      {/* Input Form */}
-      <form
-        onSubmit={handleSubmit}
-        className={cn(
-          "w-full transition-all duration-300",
-          messages.length === 0
-            ? "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-2xl w-full px-4"
-            : "fixed bottom-0 left-0 bg-gradient-to-t from-black via-black/90 to-transparent backdrop-blur-sm p-4"
-        )}
-      >
-        <div className="flex gap-2 max-w-2xl mx-auto">
-          <Input
-            name="prompt"
-            value={input}
-            onChange={handleInputChange}
-            placeholder="Ask anything..."
-            className="flex-grow bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:border-zinc-700"
-            disabled={isLoading}
-          />
-          <Button
-            type="submit"
-            size="icon"
-            className="bg-zinc-800 hover:bg-zinc-700 text-zinc-100"
-            disabled={isLoading}
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+    <div className="group overflow-hidden rounded-lg transition-all hover:ring-2 hover:ring-white/50">
+      <div className="relative h-48 w-full">
+        <Image
+          src={imageUrl}
+          alt={imageDescription || `Search result image ${index + 1}`}
+          fill
+          className={`object-cover transition-transform group-hover:scale-105 ${
+            isLoading ? "blur-sm" : "blur-0"
+          }`}
+          onError={() => {
+            console.error(`Failed to load image: ${imageUrl}`)
+            setIsError(true)
+          }}
+          onLoad={() => setIsLoading(false)}
+          unoptimized
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+      </div>
+      {imageDescription && (
+        <div className="p-3">
+          <p className="line-clamp-2 text-sm text-gray-300">{imageDescription}</p>
         </div>
-      </form>
+      )}
     </div>
-  );
+  )
+}
+
+const ImageGallery = ({ images }: { images: any[] }) => {
+  if (!images?.length) return null
+
+  return (
+    <div className="mb-6">
+      <h2 className="mb-4 font-bold text-white">Related Images ({images.length}):</h2>
+      <div className="grid grid-cols-1 gap-4">
+        {images.map((image, idx) => {
+          const imageUrl = typeof image === "string" ? image : image?.url
+          const imageDescription = typeof image === "string" ? null : image?.description
+
+          if (!imageUrl) return null
+
+          return (
+            <ImageItem
+              key={`${idx}-${imageUrl}`}
+              imageUrl={imageUrl}
+              imageDescription={imageDescription}
+              index={idx}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+export default function SearchPage() {
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState<TavilySearchResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const result = await searchTavily(query)
+
+      if (result.success && result.data) {
+        console.log("Search Results:", result.data)
+        setResults(result.data)
+      } else {
+        setError(result.error)
+      }
+    } catch (err) {
+      setError("An error occurred during search")
+      console.error("Search error:", err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <div className="mx-auto max-w-7xl p-4">
+        <form onSubmit={handleSearch} className="mb-8">
+          <div className="relative mx-auto max-w-2xl">
+            <Input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Ask anything..."
+              className="w-full rounded-full border-gray-700 bg-gray-900 pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:border-transparent focus:ring-2 focus:ring-white/50"
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400" size={20} />
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-full bg-white px-4 py-1 text-sm text-black hover:bg-gray-200"
+            >
+              {isLoading ? "Searching..." : "Search"}
+            </Button>
+          </div>
+        </form>
+
+        {error && <div className="mb-4 rounded-lg border border-red-500 bg-red-900 p-4 text-white">{error}</div>}
+
+        {results && (
+          <div className="flex flex-col gap-8 md:flex-row">
+            <div className="flex-grow space-y-6 md:w-2/3">
+              <h1 className="break-words text-4xl font-bold md:text-6xl">{query}</h1>
+
+              <div className="rounded-lg bg-gray-900 p-6 shadow-md">
+                <h2 className="mb-4 text-xl font-bold">Sources</h2>
+                <div className="space-y-4">
+                  {results.results.map((result, index) => (
+                    <div
+                      key={index}
+                      className="rounded-lg border border-gray-700 bg-gray-800 p-4 transition-colors hover:border-gray-500"
+                    >
+                      <h3 className="mb-2 text-lg font-bold">
+                        <a
+                          href={result.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white hover:underline"
+                        >
+                          {result.title}
+                        </a>
+                      </h3>
+                      <p className="mb-2 text-gray-300">{result.content}</p>
+                      <div className="text-sm text-gray-400">Relevance score: {(result.score * 100).toFixed(1)}%</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {results.answer && (
+                <div className="rounded-lg bg-gray-900 p-6 shadow-md">
+                  <h2 className="mb-2 text-xl font-bold">Answer:</h2>
+                  <p className="text-gray-300">{results.answer}</p>
+                </div>
+              )}
+
+              <div className="text-sm text-gray-400">Response time: {results.response_time.toFixed(2)}s</div>
+            </div>
+
+            {results.images && (
+              <div className="md:w-1/3">
+                <ImageGallery images={results.images} />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
