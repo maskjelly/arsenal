@@ -11,6 +11,11 @@ export interface TavilySearchResult {
   raw_content: string | null;
 }
 
+export interface QueryStrength{
+  query : string , 
+  strength : string 
+}
+
 export interface TavilySearchResponse {
   query: string;
   follow_up_questions: string[];

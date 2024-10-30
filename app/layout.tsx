@@ -5,7 +5,6 @@ import "./globals.css";
 import Banner from "@/components/banner";
 import { Analytics } from "@vercel/analytics/react";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -43,7 +42,7 @@ export default function RootLayout({
       <body className="font-mono">
         <Banner />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <Analytics />
+          <Analytics />
           {children}
         </ThemeProvider>
       </body>
