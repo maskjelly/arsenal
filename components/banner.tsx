@@ -7,7 +7,7 @@ const Banner: React.FC = () => {
       <div className="absolute inset-0 bg-[repeating-linear-gradient(135deg,_#000_0px,_#000_10px,_#facc15_10px,_#facc15_20px)] 
                       opacity-20"></div>
       <span className="relative z-10">
-        Currently under development, thus is slow and raggy 
+        Might be slow at times 
       </span>
     </div>
   );

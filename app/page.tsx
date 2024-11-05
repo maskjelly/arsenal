@@ -101,7 +101,6 @@ const SourceCard = ({ title, url }: { title: string; url: string }) => (
 
 const SkeletonLoader = () => (
   <div className="space-y-6">
-    {/* AI Response Skeleton */}
     <div className="animate-pulse space-y-4 bg-[#1C1C1C] rounded-lg p-4">
       <div className="flex items-center gap-2 mb-2">
         <div className="h-2 w-2 rounded-full bg-green-500/50"></div>
@@ -114,7 +113,6 @@ const SkeletonLoader = () => (
       </div>
     </div>
     
-    {/* Sources Skeleton */}
     <div className="space-y-2">
       <div className="h-4 w-20 bg-gray-800 rounded"></div>
       <div className="grid gap-4">
@@ -159,7 +157,6 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-[#111111]">
-      {/* Header */}
       <header className="border-b border-gray-800 bg-[#111111]">
         <div className="mx-auto max-w-4xl px-4 py-3">
           <form onSubmit={handleSearch}>
@@ -187,10 +184,8 @@ export default function SearchPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="mx-auto max-w-5xl px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          {/* Sources Sidebar */}
           <div className="md:col-span-3 space-y-4">
             <h3 className="text-sm font-medium text-gray-400">Sources</h3>
             {isLoading ? (
@@ -217,7 +212,6 @@ export default function SearchPage() {
             )}
           </div>
 
-          {/* Main Chat Area */}
           <div className="md:col-span-6 space-y-6">
             {messages.map((message, index) => (
               <div
@@ -249,7 +243,6 @@ export default function SearchPage() {
               </div>
             ))}
 
-            {/* Show skeleton loader while loading or waiting for AI response */}
             {(isLoading || (messages.length > 0 && messages[messages.length - 1]?.role === "user")) && (
               <div className="animate-pulse space-y-4 bg-[#1C1C1C] rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
@@ -265,7 +258,6 @@ export default function SearchPage() {
             )}
           </div>
 
-          {/* Images Sidebar */}
           <div className="md:col-span-3">
             {isLoading ? (
               <div className="sticky top-4 space-y-4">
