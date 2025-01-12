@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+// import { Droplert } from '../components/Droplert'
 import { ThemeProvider } from "@/app/theme-provider";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Banner from "@/components/banner";
 import { Analytics } from "@vercel/analytics/react";
+import Droplert from "@/components/droplert/droplert";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -44,6 +46,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <Analytics />
           {children}
+          <Droplert/>
         </ThemeProvider>
       </body>
     </html>
