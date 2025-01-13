@@ -2,13 +2,27 @@ import React from 'react';
 
 const Banner: React.FC = () => {
   return (
-    <div className="bg-yellow-400 text-black text-center py-2 font-bold border-t-4 border-b-4 border-yellow-600 
-                    relative overflow-hidden shadow-lg rounded-md mx-4 mt-4 transform transition-all duration-300 hover:translate-y-1">
-      <div className="absolute inset-0 bg-[repeating-linear-gradient(135deg,_#000_0px,_#000_10px,_#facc15_10px,_#facc15_20px)] 
-                      opacity-20"></div>
-      <span className="relative z-10">
-        Might be slow at times 
-      </span>
+    <div className="relative overflow-hidden">
+      <div className="flex items-center justify-center px-4 py-3 text-sm font-medium bg-white border-y-2 border-black">
+        <div className="absolute inset-0">
+          {/* Industrial pattern background */}
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,_transparent_0px,_transparent_10px,_#000_10px,_#000_12px)] opacity-5"></div>
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,_transparent_0px,_transparent_10px,_#000_10px,_#000_12px)] opacity-5"></div>
+          
+          {/* Warning stripes on sides */}
+          <div className="absolute left-0 top-0 bottom-0 w-2 bg-[repeating-linear-gradient(135deg,_#000_0px,_#000_10px,_#facc15_10px,_#facc15_20px)]"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-2 bg-[repeating-linear-gradient(135deg,_#000_0px,_#000_10px,_#facc15_10px,_#facc15_20px)]"></div>
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10 flex items-center gap-2 font-mono">
+          <div className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse"></div>
+          <span className="relative">
+            <span className="font-bold tracking-tight">NOTICE:</span>{" "}
+            <span className="text-neutral-800">AI generated answers will not be generated as I HAVE RAN OUT OF CREDITS</span>
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

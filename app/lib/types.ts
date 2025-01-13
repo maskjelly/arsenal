@@ -1,6 +1,7 @@
 export interface TavilyImage {
   url: string;
   description: string;
+  title : string;
 }
 
 export interface TavilySearchResult {

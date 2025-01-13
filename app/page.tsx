@@ -23,14 +23,14 @@ const ImageItem = ({
 
   if (isError) {
     return (
-      <div className="h-48 w-full bg-gray-800 rounded-lg flex items-center justify-center">
-        <p className="text-sm text-gray-400">Failed to load image</p>
+      <div className="h-48 w-full bg-neutral-50 rounded-lg flex items-center justify-center">
+        <p className="text-sm text-neutral-500">Failed to load image</p>
       </div>
     );
   }
 
   return (
-    <div className="group overflow-hidden rounded-lg transition-all hover:ring-2 hover:ring-white/50">
+    <div className="group overflow-hidden rounded-lg transition-all hover:ring-2 hover:ring-black/50">
       <div className="relative h-48 w-full">
         <Image
           src={imageUrl}
@@ -50,7 +50,7 @@ const ImageItem = ({
       </div>
       {imageDescription && (
         <div className="p-3">
-          <p className="line-clamp-2 text-sm text-gray-300">
+          <p className="line-clamp-2 text-sm text-neutral-600">
             {imageDescription}
           </p>
         </div>
@@ -64,7 +64,7 @@ const ImageGallery = ({ images }: { images: any[] }) => {
 
   return (
     <div className="mt-6">
-      <h3 className="text-sm font-medium text-gray-400 mb-4">Related Images</h3>
+      <h3 className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-4">Related Images</h3>
       <div className="grid grid-cols-2 gap-4">
         {images.map((image, idx) => {
           const imageUrl = typeof image === "string" ? image : image?.url;
@@ -92,36 +92,32 @@ const SourceCard = ({ title, url }: { title: string; url: string }) => (
     href={url} 
     target="_blank" 
     rel="noopener noreferrer" 
-    className="block p-3 rounded-lg bg-[#1C1C1C] hover:bg-[#252525] transition-colors"
+    className="block p-3 rounded-lg bg-neutral-50 border border-neutral-200 hover:bg-neutral-100 transition-colors"
   >
-    <h3 className="text-sm font-medium text-gray-200 line-clamp-2 mb-1">{title}</h3>
-    <div className="text-xs text-gray-500 line-clamp-1">{url}</div>
+    <h3 className="text-sm font-medium text-neutral-600 line-clamp-2 mb-1">{title}</h3>
+    <div className="text-xs text-neutral-500 line-clamp-1">{url}</div>
   </a>
 );
 
 const SkeletonLoader = () => (
   <div className="space-y-6">
-    <div className="animate-pulse space-y-4 bg-[#1C1C1C] rounded-lg p-4">
+    <div className="animate-pulse space-y-4 bg-neutral-50 border border-neutral-200 rounded-lg p-4">
       <div className="flex items-center gap-2 mb-2">
-        <div className="h-2 w-2 rounded-full bg-green-500/50"></div>
-        <div className="h-4 w-20 bg-gray-800 rounded"></div>
+        <div className="h-2 w-2 rounded-full bg-emerald-500/50"></div>
+        <div className="h-4 w-20 bg-neutral-200 rounded"></div>
       </div>
       <div className="space-y-2">
-        <div className="h-4 bg-gray-800 rounded w-3/4"></div>
-        <div className="h-4 bg-gray-800 rounded w-5/6"></div>
-        <div className="h-4 bg-gray-800 rounded w-2/3"></div>
+        <div className="h-4 bg-neutral-200 rounded w-3/4"></div>
+        <div className="h-4 bg-neutral-200 rounded w-5/6"></div>
+        <div className="h-4 bg-neutral-200 rounded w-2/3"></div>
       </div>
     </div>
     
     <div className="space-y-2">
-      <div className="h-4 w-20 bg-gray-800 rounded"></div>
+      <div className="h-4 w-20 bg-neutral-200 rounded"></div>
       <div className="grid gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="animate-pulse p-4 rounded-lg bg-[#1C1C1C]">
-            <div className="h-4 bg-gray-800 rounded w-3/4 mb-2"></div>
-            <div className="h-3 bg-gray-800 rounded w-5/6 mb-2"></div>
-            <div className="h-3 bg-gray-800 rounded w-1/2"></div>
-          </div>
+          <div key={i} className="animate-pulse p-4 rounded-lg bg-neutral-50 border border-neutral-100" />
         ))}
       </div>
     </div>
@@ -156,28 +152,28 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#111111]">
-      <header className="border-b border-gray-800 bg-[#111111]">
-        <div className="mx-auto max-w-4xl px-4 py-3">
+    <div className="min-h-screen bg-neutral-50">
+      <header className="border-b border-neutral-200 bg-white sticky top-0 z-10">
+        <div className="mx-auto max-w-5xl px-4 py-4">
           <form onSubmit={handleSearch}>
-            <div className="relative">
+            <div className="relative max-w-2xl mx-auto">
               <Input
                 type="text"
                 value={input}
                 onChange={handleInputChange}
                 placeholder="Ask anything..."
-                className="w-full rounded-lg border-gray-800 bg-[#1C1C1C] pl-10 pr-4 py-2 text-gray-100 placeholder-gray-500 focus:border-gray-700 focus:ring-1 focus:ring-gray-700"
+                className="w-full rounded-2xl border-2 border-neutral-200 bg-white pl-12 pr-20 py-4 text-lg text-neutral-900 placeholder-neutral-500 focus:border-black focus:ring-0 shadow-sm hover:border-neutral-300 transition-colors"
               />
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-500"
-                size={18}
+                className="absolute left-4 top-1/2 -translate-y-1/2 transform text-neutral-400"
+                size={20}
               />
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-md bg-gray-800 px-3 py-1 text-sm text-gray-300 hover:bg-gray-700"
+                className="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-xl bg-black px-6 py-2 text-sm font-medium text-white hover:bg-neutral-800 transition-colors"
               >
-                {isLoading ? "Searching..." : "Search"}
+                {isLoading ? "Searching..." : "Ask"}
               </Button>
             </div>
           </form>
@@ -185,95 +181,123 @@ export default function SearchPage() {
       </header>
 
       <main className="mx-auto max-w-5xl px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <div className="md:col-span-3 space-y-4">
-            <h3 className="text-sm font-medium text-gray-400">Sources</h3>
-            {isLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="animate-pulse p-3 rounded-lg bg-[#1C1C1C]">
-                    <div className="h-4 bg-gray-800 rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-gray-800 rounded w-1/2"></div>
+        <div className="grid grid-cols-12 gap-8">
+          {/* Main chat column */}
+          <div className="col-span-12 lg:col-span-8 space-y-6">
+            <div className="bg-white rounded-2xl border-2 border-neutral-200 p-6 space-y-6">
+              {messages.map((message, index) => (
+                <div
+                  key={message.id}
+                  className={`${
+                    message.role === "user"
+                      ? "bg-neutral-50 border border-neutral-200 rounded-xl p-4"
+                      : "relative"
+                  }`}
+                >
+                  {message.role === "assistant" && (
+                    <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-medium">
+                      AI
+                    </div>
+                  )}
+                  <div className={message.role === "assistant" ? "pl-6" : ""}>
+                    {message.role === "user" ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-neutral-900">
+                          {message.content}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="prose prose-neutral max-w-none">
+                        <p className="text-base leading-relaxed">{message.content}</p>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : (
-              searchResults?.results && (
-                <div className="space-y-3 sticky top-4">
-                  {searchResults.results.map((result, idx) => (
-                    <SourceCard
-                      key={idx}
-                      title={result.title}
-                      url={result.url}
-                    />
-                  ))}
                 </div>
-              )
-            )}
+              ))}
+
+              {(isLoading || (messages.length > 0 && messages[messages.length - 1]?.role === "user")) && (
+                <div className="animate-pulse relative">
+                  <div className="absolute -left-3 top-0 w-6 h-6 rounded-full bg-black/50 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                  </div>
+                  <div className="pl-6 space-y-3">
+                    <div className="h-4 bg-neutral-100 rounded-full w-3/4"></div>
+                    <div className="h-4 bg-neutral-100 rounded-full w-5/6"></div>
+                    <div className="h-4 bg-neutral-100 rounded-full w-2/3"></div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="md:col-span-6 space-y-6">
-            {messages.map((message, index) => (
-              <div
-                key={message.id}
-                className={`rounded-lg p-4 ${
-                  message.role === "user"
-                    ? "bg-[#1C1C1C] text-gray-300"
-                    : "bg-[#1C1C1C] text-gray-100"
-                }`}
-              >
-                {message.role === "user" ? (
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                    <span className="text-sm font-medium text-gray-400">
-                      Question
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                    <span className="text-sm font-medium text-gray-400">
-                      Answer
-                    </span>
-                  </div>
-                )}
-                <div className="prose prose-invert max-w-none">
-                  <p className="text-sm leading-relaxed">{message.content}</p>
-                </div>
-              </div>
-            ))}
-
-            {(isLoading || (messages.length > 0 && messages[messages.length - 1]?.role === "user")) && (
-              <div className="animate-pulse space-y-4 bg-[#1C1C1C] rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="h-2 w-2 rounded-full bg-green-500/50"></div>
-                  <div className="h-4 w-20 bg-gray-800 rounded"></div>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-800 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-800 rounded w-5/6"></div>
-                  <div className="h-4 bg-gray-800 rounded w-2/3"></div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="md:col-span-3">
-            {isLoading ? (
-              <div className="sticky top-4 space-y-4">
-                <div className="h-4 w-32 bg-gray-800 rounded"></div>
-                <div className="grid grid-cols-1 gap-4">
-                  {[1, 2].map((i) => (
-                    <div key={i} className="aspect-square bg-[#1C1C1C] rounded-lg animate-pulse" />
+          {/* Sidebar with sources and images */}
+          <div className="col-span-12 lg:col-span-4 space-y-6">
+            {/* Sources section */}
+            <div className="bg-white rounded-2xl border-2 border-neutral-200 p-6">
+              <h3 className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-4">Sources</h3>
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="animate-pulse rounded-xl bg-neutral-50 p-4">
+                      <div className="h-4 bg-neutral-200 rounded-full w-3/4 mb-2"></div>
+                      <div className="h-3 bg-neutral-200 rounded-full w-1/2"></div>
+                    </div>
                   ))}
                 </div>
-              </div>
-            ) : (
-              searchResults?.images && (
-                <div className="sticky top-4">
-                  <ImageGallery images={searchResults.images} />
+              ) : (
+                searchResults?.results && (
+                  <div className="space-y-3">
+                    {searchResults.results.map((result, idx) => (
+                      <a
+                        key={idx}
+                        href={result.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block p-4 rounded-xl bg-neutral-50 hover:bg-neutral-100 transition-colors border border-transparent hover:border-neutral-200"
+                      >
+                        <h4 className="text-sm font-medium text-neutral-900 line-clamp-2 mb-1">
+                          {result.title}
+                        </h4>
+                        <p className="text-xs text-neutral-500 line-clamp-2">
+                          {result.content}
+                        </p>
+                      </a>
+                    ))}
+                  </div>
+                )
+              )}
+            </div>
+
+            {/* Images section */}
+            {(searchResults?.images?.length ?? 0) > 0 && (
+              <div className="bg-white rounded-2xl border-2 border-neutral-200 p-6">
+                <h3 className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-4">Related Images</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {searchResults?.images?.slice(0, 4).map((image, idx) => {
+                    const imageUrl = typeof image === "string" ? image : image?.url;
+                    const imageDescription = typeof image === "string" ? null : image?.title;
+                    
+                    return (
+                      <div key={idx} className="group relative aspect-square rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
+                        <Image
+                          src={imageUrl || ""}
+                          alt={imageDescription || `Related image ${idx + 1}`}
+                          fill
+                          className="object-cover transition-transform group-hover:scale-105"
+                          unoptimized
+                        />
+                        {imageDescription && (
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p className="absolute bottom-0 left-0 right-0 p-4 text-xs text-white line-clamp-2">
+                              {imageDescription}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              )
+              </div>
             )}
           </div>
         </div>
